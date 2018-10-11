@@ -1,24 +1,35 @@
 #!/bin/bash
 #récupère la valeur de luminosité
 lum=$(cat /sys/class/backlight/intel_backlight/brightness)
+#récupère la valeur maximum de la luminosité
 lum_max=$(cat /sys/class/backlight/intel_backlight/max_brightness)
 
+#si l'argument 1 est inc (pour incrémenté)
 if [ $1 = "inc" ]
 then
+	#on test voir si la luminosité actuelle + ceux que l'ont veut rajouté ne dépasse pas la luminosité max
 	test=$(($lum+$2))
 	if [ "$test" -le $lum_max ]
 	then
+		# On ajoute la valeur a la luminosité actuelle
 		lum=$(($lum+$2))
+		#On écrit dans le fichier suivant la nouvelle valeur de la luminosité
 		echo $lum > /sys/class/backlight/intel_backlight/brightness
+		
 	fi
 fi
 
+
+#si l'argument 1 est dec (pour décrémenté)
 if [ $1 = "dec" ]
 then
+	#on test voir si la luminosité actuelle - ceux que l'ont veut enlevé pour ne pas allé dans le négatif
 	test=$(($lum-$2))
 	if [ "$test" -ge "0" ]
 	then
+		# On enlève la valeur à la luminosité actuelle
 		lum=$(($lum-$2))
 		echo $lum > /sys/class/backlight/intel_backlight/brightness
+		#On écrit dans le fichier suivant la nouvelle valeur de la luminosité
 	fi
 fi
