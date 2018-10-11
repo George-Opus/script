@@ -5,7 +5,7 @@ lum=$(cat /sys/class/backlight/intel_backlight/brightness)
 lum_max=$(cat /sys/class/backlight/intel_backlight/max_brightness)
 
 #si l'argument 1 est inc (pour incrémenté)
-if [ $1 = "inc" ]
+if [ $1 = "--increase" || $1 = "-i" ]
 then
 	#on test voir si la luminosité actuelle + ceux que l'ont veut rajouté ne dépasse pas la luminosité max
 	test=$(($lum+$2))
@@ -21,7 +21,7 @@ fi
 
 
 #si l'argument 1 est dec (pour décrémenté)
-if [ $1 = "dec" ]
+if [ $1 = "--decrease" || $1 = "-d" ]
 then
 	#on test voir si la luminosité actuelle - ceux que l'ont veut enlevé pour ne pas allé dans le négatif
 	test=$(($lum-$2))
@@ -32,4 +32,10 @@ then
 		echo $lum > /sys/class/backlight/intel_backlight/brightness
 		#On écrit dans le fichier suivant la nouvelle valeur de la luminosité
 	fi
+fi
+
+if [ $1 = "--help" || $1 = "-h"]
+then
+     echo -n "Utilisation : light [OPTION...] <VALEUR>\n\n" #Affichage de la première ligne de l'aide
+     echo -n "-i , --increase         in "    
 fi
