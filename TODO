@@ -1,4 +1,4 @@
-Faire un --help -h
+1/Faire un --help -h
 
 expliquant l'utilisation du script.
 
@@ -6,5 +6,7 @@ expliquant l'utilisation du script.
     - dec pour décrémenter + <valeur>
 
 La VALEUR ne doit pas dépasser : /sys/class/backlight/intel_backlight/max_brightness
+
+2/ Modifier le script pour retourner une erreur si les arguments ne sont pas bon.
 
 
