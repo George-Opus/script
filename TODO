@@ -1,0 +1,10 @@
+Faire un --help -h
+
+expliquant l'utilisation du script.
+
+    - inc pour incrémenter + <valeur> 
+    - dec pour décrémenter + <valeur>
+
+La VALEUR ne doit pas dépasser : /sys/class/backlight/intel_backlight/max_brightness
+
+
