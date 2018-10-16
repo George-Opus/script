@@ -5,7 +5,7 @@ lum=$(cat /sys/class/backlight/intel_backlight/brightness)
 lum_max=$(cat /sys/class/backlight/intel_backlight/max_brightness)
 
 #si l'argument 1 est inc (pour incrémenté)
-if [ $1 = "--increase" || $1 = "-i" ]
+if [ $1 = "--increase" ] || [ $1 = "-i" ]
 then
 	#on test voir si la luminosité actuelle + ceux que l'ont veut rajouté ne dépasse pas la luminosité max
 	test=$(($lum+$2))
@@ -21,7 +21,7 @@ fi
 
 
 #si l'argument 1 est dec (pour décrémenté)
-if [ $1 = "--decrease" || $1 = "-d" ]
+if [ $1 = "--decrease" ] || [ $1 = "-d" ]
 then
 	#on test voir si la luminosité actuelle - ceux que l'ont veut enlevé pour ne pas allé dans le négatif
 	test=$(($lum-$2))
@@ -34,8 +34,13 @@ then
 	fi
 fi
 
-if [ $1 = "--help" || $1 = "-h"]
+if [ $1 = "--help" ] || [ $1 = "-h" ]
 then
-     echo -n "Utilisation : light [OPTION...] <VALEUR>\n\n" #Affichage de la première ligne de l'aide
-     echo -n "-i , --increase         in "    
+    echo -e "Utilisation : light [OPTION...] <VALEUR>\n" #Affichage de la première ligne de l'aide
+    echo -e "-i, --increase         incrémente la valeur de la luminosité\n"
+    echo -e "-d, --decrease         décrémente la valeur de la luminosité\n"
+    echo -e "-m, --modify           modifie la veleur directement dans le fichier source\n"
+    echo -e "-p, --path             permet de spécifer le chemin du fichier brightness "
+    echo -e "Exemples:\n    light -i 30     Augmente la luminosité de 30 dans le fichier source\n    light -d 30     Réduit la luminosité de 30 dans le fichier source.\n"   
+    echo -e "Le fichier source utilisé se trouve dans /sys/class/backlight/intel_backlight/brightness\nCette outil s'utilise pour les cartes intel."
 fi
