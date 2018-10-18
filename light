@@ -5,37 +5,57 @@ lum=$(cat /sys/class/backlight/intel_backlight/brightness)
 lum_max=$(cat /sys/class/backlight/intel_backlight/max_brightness)
 
 #si l'argument 1 est inc (pour incrémenté)
-if [ $1 = "--increase" || $1 = "-i" ]
+if [ $1 = "--increase" ] || [ $1 = "-i" ]
 then
 	#on test voir si la luminosité actuelle + ceux que l'ont veut rajouté ne dépasse pas la luminosité max
-	test=$(($lum+$2))
-	if [ "$test" -le $lum_max ]
+	test=$(echo "$2/100" | bc -l)
+	test=$(echo "$test*$lum_max" | bc -l)
+	lum_total=$(echo "$test+$lum" | bc -l)	
+	lum_total=$(echo $lum_total | cut -d. -f1)	
+	if [ "$lum_total" -le "$lum_max" ]
 	then
 		# On ajoute la valeur a la luminosité actuelle
-		lum=$(($lum+$2))
+		lum=$lum_total
 		#On écrit dans le fichier suivant la nouvelle valeur de la luminosité
+		echo "$lum" > /sys/class/backlight/intel_backlight/brightness
+	else
+		lum=$lum_max
 		echo $lum > /sys/class/backlight/intel_backlight/brightness
-		
 	fi
 fi
 
 
 #si l'argument 1 est dec (pour décrémenté)
-if [ $1 = "--decrease" || $1 = "-d" ]
+if [ $1 = "--decrease" ] || [ $1 = "-d" ]
 then
 	#on test voir si la luminosité actuelle - ceux que l'ont veut enlevé pour ne pas allé dans le négatif
-	test=$(($lum-$2))
-	if [ "$test" -ge "0" ]
+	test=$(echo "$2/100" | bc -l)
+	test=$(echo "$test*$lum_max" | bc -l)
+	lum_total=$(echo "$lum-$test" | bc -l)
+	lum_total=$(echo $lum_total | cut -d. -f1)	
+	if [ "$lum_total" -ge  "0" ]
 	then
 		# On enlève la valeur à la luminosité actuelle
-		lum=$(($lum-$2))
+		lum=$lum_total
 		echo $lum > /sys/class/backlight/intel_backlight/brightness
 		#On écrit dans le fichier suivant la nouvelle valeur de la luminosité
+	else
+		lum=0
+		echo $lum > /sys/class/backlight/intel_backlight/brightness
 	fi
 fi
 
-if [ $1 = "--help" || $1 = "-h"]
+if [ $1 = "--help" ] || [ $1 = "-h" ]
 then
      echo -n "Utilisation : light [OPTION...] <VALEUR>\n\n" #Affichage de la première ligne de l'aide
      echo -n "-i , --increase         in "    
 fi
+
+if [ $1 = "--modify" ] || [ $1 = "-m" ]
+then
+	if [ $2  -ge "0" ]  && [ $2 -le $lum_max ]
+	then
+		echo $2 > /sys/class/backlight/intel_backlight/brightness
+	fi
+fi
+
