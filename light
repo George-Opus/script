@@ -1,13 +1,13 @@
 #!/bin/bash
-#récupère la valeur de luminosité
+#recupere la valeur de luminosite
 lum=$(cat /sys/class/backlight/intel_backlight/brightness)
-#récupère la valeur maximum de la luminosité
+#recupere la valeur maximum de la luminosite
 lum_max=$(cat /sys/class/backlight/intel_backlight/max_brightness)
 
-#si l'argument 1 est inc (pour incrémenté)
+#si l'argument 1 est inc (pour incremente
 if [ $1 = "--increase" ] || [ $1 = "-i" ]
 then
-	#on test voir si la luminosité actuelle + ceux que l'ont veut rajouté ne dépasse pas la luminosité max
+	#on test voir si la luminosite actuelle + ceux que l'ont veut rajoute ne depasse pas la luminosite max
 	test=$(echo "$2/100" | bc -l)
 	test=$(echo "$test*$lum_max" | bc -l)
 	lum_total=$(echo "$test+$lum" | bc -l)	
@@ -16,7 +16,7 @@ then
 	then
 		# On ajoute la valeur a la luminosité actuelle
 		lum=$lum_total
-		#On écrit dans le fichier suivant la nouvelle valeur de la luminosité
+		#On erit dans le fichier suivant la nouvelle valeur de la luminosite
 		echo "$lum" > /sys/class/backlight/intel_backlight/brightness
 	else
 		lum=$lum_max
@@ -25,20 +25,20 @@ then
 fi
 
 
-#si l'argument 1 est dec (pour décrémenté)
+#si l'argument 1 est dec (pour decremente)
 if [ $1 = "--decrease" ] || [ $1 = "-d" ]
 then
-	#on test voir si la luminosité actuelle - ceux que l'ont veut enlevé pour ne pas allé dans le négatif
+	#on test voir si la luminosite actuelle - ceux que l'ont veut enleve pour ne pas alle dans le negatif
 	test=$(echo "$2/100" | bc -l)
 	test=$(echo "$test*$lum_max" | bc -l)
 	lum_total=$(echo "$lum-$test" | bc -l)
 	lum_total=$(echo $lum_total | cut -d. -f1)	
 	if [ "$lum_total" -ge  "0" ]
 	then
-		# On enlève la valeur à la luminosité actuelle
+		# On enleve la valeur de la luminosite actuelle
 		lum=$lum_total
 		echo $lum > /sys/class/backlight/intel_backlight/brightness
-		#On écrit dans le fichier suivant la nouvelle valeur de la luminosité
+		#On erit dans le fichier suivant la nouvelle valeur de la luminosite
 	else
 		lum=0
 		echo $lum > /sys/class/backlight/intel_backlight/brightness
@@ -47,7 +47,7 @@ fi
 
 if [ $1 = "--help" ] || [ $1 = "-h" ]
 then
-     echo -n "Utilisation : light [OPTION...] <VALEUR>\n\n" #Affichage de la première ligne de l'aide
+     echo -n "Utilisation : light [OPTION...] <VALEUR>\n\n" #Affichage de la premiere ligne de l'aide
      echo -n "-i , --increase         in "    
 fi
 
