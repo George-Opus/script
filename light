@@ -14,7 +14,7 @@ then
 	lum_total=$(echo $lum_total | cut -d. -f1)	
 	if [ "$lum_total" -le "$lum_max" ]
 	then
-		# On ajoute la valeur a la luminosité actuelle
+		# On ajoute la valeur a la luminosite actuelle
 		lum=$lum_total
 		#On erit dans le fichier suivant la nouvelle valeur de la luminosite
 		echo "$lum" > /sys/class/backlight/intel_backlight/brightness
