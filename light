@@ -1,61 +1,122 @@
 #!/bin/bash
+
+default_path="/sys/class/backlight/intel_backlight"
+path="$default_path/brightness"
+path_max="$default_path/max_brightness"
+
+tab=()
+i=0
+for param in $*
+do
+	tab[i]=$param
+	i=$(($i+1))
+done
+
+#-------------------------------
+i=1
+for param in ${tab[@]}
+do
+	if [ $param = "--path" ] || [ $param = "-p" ]
+	then
+		path=$(echo ${tab[i]} | sed 's/\/$//')
+	fi
+done
+
+
+
 #recupere la valeur de luminosite
-lum=$(cat /sys/class/backlight/intel_backlight/brightness)
+lum=$(cat $path)
 #recupere la valeur maximum de la luminosite
-lum_max=$(cat /sys/class/backlight/intel_backlight/max_brightness)
+lum_max=$(cat $path_max)
 
+
+
+i=1
+for param in ${tab[@]}
+do
 #si l'argument 1 est inc (pour incremente
-if [ $1 = "--increase" ] || [ $1 = "-i" ]
+if [ $param = "--increase" ] || [ $param = "-i" ]
 then
-	#on test voir si la luminosite actuelle + ceux que l'ont veut rajoute ne depasse pas la luminosite max
-	test=$(echo "$2/100" | bc -l)
-	test=$(echo "$test*$lum_max" | bc -l)
-	lum_total=$(echo "$test+$lum" | bc -l)	
-	lum_total=$(echo $lum_total | cut -d. -f1)	
-	if [ "$lum_total" -le "$lum_max" ]
-	then
-		# On ajoute la valeur a la luminosite actuelle
-		lum=$lum_total
-		#On erit dans le fichier suivant la nouvelle valeur de la luminosite
-		echo "$lum" > /sys/class/backlight/intel_backlight/brightness
-	else
-		lum=$lum_max
-		echo $lum > /sys/class/backlight/intel_backlight/brightness
+		#on test voir si la luminosite actuelle + ceux que l'ont veut rajoute ne depasse pas la luminosite max
+		test=$(echo "${tab[$i]}/100" | bc -l)
+		test=$(echo "$test*$lum_max" | bc -l)
+		lum_total=$(echo "$test+$lum" | bc -l)	
+		lum_total=$(echo $lum_total | cut -d. -f1)	
+		if [ "$lum_total" -le "$lum_max" ]
+		then
+			# On ajoute la valeur a la luminosite actuelle
+			lum=$lum_total
+			#On erit dans le fichier suivant la nouvelle valeur de la luminosite
+			echo "$lum" > $path
+		else
+			lum=$lum_max
+			echo $lum > $path
+		fi
 	fi
-fi
+	i=$(($i+1))
+done
 
 
-#si l'argument 1 est dec (pour decremente)
-if [ $1 = "--decrease" ] || [ $1 = "-d" ]
-then
-	#on test voir si la luminosite actuelle - ceux que l'ont veut enleve pour ne pas alle dans le negatif
-	test=$(echo "$2/100" | bc -l)
-	test=$(echo "$test*$lum_max" | bc -l)
-	lum_total=$(echo "$lum-$test" | bc -l)
-	lum_total=$(echo $lum_total | cut -d. -f1)	
-	if [ "$lum_total" -ge  "0" ]
+#-----------------------------
+
+i=1
+for param in ${tab[@]}
+do
+	#si l'argument 1 est dec (pour decremente)
+	if [ $param = "--decrease" ] || [ $param = "-d" ]
 	then
-		# On enleve la valeur de la luminosite actuelle
-		lum=$lum_total
-		echo $lum > /sys/class/backlight/intel_backlight/brightness
-		#On erit dans le fichier suivant la nouvelle valeur de la luminosite
-	else
-		lum=0
-		echo $lum > /sys/class/backlight/intel_backlight/brightness
+		#on test voir si la luminosite actuelle - ceux que l'ont veut enleve pour ne pas alle dans le negatif
+		test=$(echo "${tab[$i]}/100" | bc -l)
+		test=$(echo "$test*$lum_max" | bc -l)
+		lum_total=$(echo "$lum-$test" | bc -l)
+		lum_total=$(echo $lum_total | cut -d. -f1)	
+		if [ "$lum_total" -ge  "0" ]
+		then
+			# On enleve la valeur de la luminosite actuelle
+			lum=$lum_total
+			echo $lum > $path
+			#On erit dans le fichier suivant la nouvelle valeur de la luminosite
+		else
+			lum=0
+			echo $lum > $path
+		fi
 	fi
-fi
+	i=$(($i+1))
+done
 
-if [ $1 = "--help" ] || [ $1 = "-h" ]
-then
-     echo -n "Utilisation : light [OPTION...] <VALEUR>\n\n" #Affichage de la premiere ligne de l'aide
-     echo -n "-i , --increase         in "    
-fi
-
-if [ $1 = "--modify" ] || [ $1 = "-m" ]
-then
-	if [ $2  -ge "0" ]  && [ $2 -le $lum_max ]
+for param in ${tab[@]}
+do
+	if [ $param = "--help" ] || [ $param = "-h" ]
 	then
-		echo $2 > /sys/class/backlight/intel_backlight/brightness
+	     echo -en "Utilisation : light [OPTION...] <VALEUR>\n\n" #Affichage de la premiere ligne de l'aide
+	     echo -en "-i , --increase         in \n"    
 	fi
-fi
+done
 
+i=1
+for param in ${tab[@]}
+do
+	if [ $param = "--modify" ] || [ $param = "-m" ]
+	then
+		if [ $param  -ge "0" ]  && [ $param -le $lum_max ]
+		then
+			echo ${tab[$i]} > $path
+		fi
+	fi
+
+done
+
+
+i=1
+for param in ${tab[@]}
+do
+	if [ $param == "--show" ] || [ $param == "-s" ]
+	then
+		test=$(cat $path)
+		test=$(echo "$test/$lum_max" | bc -l)
+		test=$(echo "$test*100" | bc -l)
+		test=$(echo $test | cut -d. -f1)	
+		echo $test
+	fi
+
+done
