@@ -103,14 +103,14 @@ do
 			echo ${tab[$i]} > $path
 		fi
 	fi
-
+	i=$(($i+1))
 done
 
 
 i=1
 for param in ${tab[@]}
 do
-	if [ $param == "--show" ] || [ $param == "-s" ]
+	if [ $param = "--show" ] || [ $param = "-s" ]
 	then
 		test=$(cat $path)
 		test=$(echo "$test/$lum_max" | bc -l)
@@ -118,5 +118,4 @@ do
 		test=$(echo $test | cut -d. -f1)	
 		echo $test
 	fi
-
 done
