@@ -19,6 +19,7 @@ then
 	fi
 fi
 
+echo $zob
 #si l'argument 1 est dec (pour décrémenté)
 if [ $1 = "dec" ]
 then
@@ -33,3 +34,4 @@ then
 	fi
 fi
 #zob zob
+echo $zob
