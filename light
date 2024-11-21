@@ -33,5 +33,4 @@ then
 		#On écrit dans le fichier suivant la nouvelle valeur de la luminosité
 	fi
 fi
-#zob zob
 echo $zob
