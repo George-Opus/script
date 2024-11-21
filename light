@@ -2,20 +2,20 @@
 #récupère la valeur de luminosité
 lum=$(cat /sys/class/backlight/intel_backlight/brightness)
 #récupère la valeur maximum de la luminosité
-lum_maxzooooooooob=$(cat /sys/class/backlight/intel_backlight/max_brightness)
+lum_max=$(cat /sys/class/backlight/intel_backlight/max_brightness)
 
 #si l'argument 1 est inc (pour incrémenté)
 if [ $1 = "inc" ]
 then
 	#on test voir si la luminosité actuelle + ceux que l'ont veut rajouté ne dépasse pas la luminosité max
 	test=$(($lum+$2))
-	if [ "$test" -le $lum_maxzooooooooob ]
+	if [ "$test" -le $lum_max ]
 	then
 		# On ajoute la valeur a la luminosité actuelle
 		lum=$(($lum+$2))
 		#On écrit dans le fichier suivant la nouvelle valeur de la luminosité
 		echo $lum > /sys/class/backlight/intel_backlight/brightness
-		
+		#ouioui
 	fi
 fi
 
